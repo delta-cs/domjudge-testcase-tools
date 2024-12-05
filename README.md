@@ -1,2 +1,2 @@
 # domjudge-help-tools
-Helper tools for managing DOMjudge constests
+Tooling for checking correct file encodings, and correctness of testcases
