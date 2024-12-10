@@ -6,7 +6,7 @@
 
 ## usage
 ```
-usage: testcase-help.py [-h] [-V] [-r] [-f] [-g CMD] [-v CMD] [-z] [-n NAME] PATH
+usage: testcase-tools.py [-h] [-V] [-r] [-f] [-g CMD] [-v CMD] [-z] [-n NAME] PATH
 
 positional arguments:
   PATH                  Path to a file or directory
