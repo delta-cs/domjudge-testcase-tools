@@ -69,8 +69,9 @@ def fix_encoding_dir(path, recursive=False):
     '''
     Change all contained files encoding to UTF-8 LE (the UNIX standard)
     '''
+
     for f in glob.glob(f"{path}/**", recursive=recursive):
-        if(os.path.isfile(f)):
+        if(os.path.isfile(f) and any(x not in f for x in ('in', 'ans', 'out'))): # if is file and has in/out/ans in name
             fix_encoding_file(f)
 
 
