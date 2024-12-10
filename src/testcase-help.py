@@ -51,7 +51,7 @@ def fix_encoding_dir(path, recursive=False):
 
 
 def fix_encoding(args :argparse.Namespace):
-    verb_print(f"TASK: fix-encoding of {args.path}")
+    verb_print(f"TASK: fix encoding of {args.path}")
 
     
     if os.path.isdir(args.path):
@@ -67,7 +67,7 @@ def fix_encoding(args :argparse.Namespace):
         return 1
 
 
-    verb_print("TASK DONE!")
+    verb_print("TASK DONE")
 
 
 
@@ -76,6 +76,10 @@ def fix_encoding(args :argparse.Namespace):
 #============================================================
 
 def gen_check_res(args :argparse.Namespace, gen=True):
+    '''
+    Run command on all in files, write output to ans or verify if ans is matching
+    '''
+    verb_print(f"TASK: {(lambda: "generating" if gen else "verifying")()} results")
 
     test_i = 1
     for in_file in glob.glob(f"**/*in*", root_dir=args.path, recursive=True):
@@ -92,6 +96,8 @@ def gen_check_res(args :argparse.Namespace, gen=True):
         if(gen): cmd = args.generate_answers
         else: cmd = args.verify_answers
 
+        verb_print(f"  running {cmd} on {dir_path}")
+
         process = subprocess.run(
             cmd,
             input=in_txt,
@@ -102,14 +108,17 @@ def gen_check_res(args :argparse.Namespace, gen=True):
         if process.returncode != 0:
             print(f"Error: '{cmd}' failed on '{in_file_path}' with exit code {process.returncode}")
 
+
         ans_txt = process.stdout
         
 
         if gen:
+            verb_print("  writing ans.txt")
             with open(f"{dir_path}/ans.txt", "w") as f:
                 f.write(ans_txt)
 
         else:
+            verb_print("  searching for ans/out file to compare")
             out_files = glob.glob(f"*ans*", root_dir=dir_path) + glob.glob(f"*out*", root_dir=dir_path)
 
             if len(out_files) != 1:
@@ -124,7 +133,7 @@ def gen_check_res(args :argparse.Namespace, gen=True):
             else:
                 verb_print(f"  answer in {dir_name} matching")
 
-            
+    verb_print("TASK DONE")
 
 #============================================================
 # ZIP
@@ -133,6 +142,8 @@ def gen_check_res(args :argparse.Namespace, gen=True):
 
 
 def make_import_zip(args :argparse.Namespace):
+    verb_print(f"TASK: generate {args.name}.zip")
+
     zipf = zipfile.PyZipFile(f"{args.name}.zip", "w")
     zipf.mkdir("data")
     zipf.mkdir("data/secret")
@@ -145,8 +156,12 @@ def make_import_zip(args :argparse.Namespace):
         dir_path = f"{args.path}/{os.path.dirname(in_file)}"
         dir_name = os.path.basename(dir_path)
 
+        verb_print(f"  writing problem #{test_i} ({dir_path}) .in and .desc to archive")
+
         zipf.write(f"{args.path}/{in_file}", f"data/secret/{test_i}.in")
         zipf.writestr(f"data/secret/{test_i}.desc", dir_name)
+
+        verb_print(f"  searching for matching ans/out file")
 
         out_files = glob.glob(f"*ans*", root_dir=dir_path) + glob.glob(f"*out*", root_dir=dir_path)
 
@@ -154,11 +169,12 @@ def make_import_zip(args :argparse.Namespace):
             print(f"Error: missing .out/.ans file in {dir_path}")
 
         else:
+            verb_print(f"  ans/out file found, writing to archive")
             zipf.write(f"{dir_path}/{out_files[0]}", f"data/secret/{test_i}.ans")
         
 
     zipf.close()
-
+    verb_print("TASK DONE")
 
 
 
@@ -220,7 +236,7 @@ def main():
         gen_check_res(args)
 
     if args.verify_answers is not None:
-        gen_check_res(args)
+        gen_check_res(args, False)
 
     
     if args.make_zip:
