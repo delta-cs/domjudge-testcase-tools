@@ -6,8 +6,20 @@ import chardet
 import subprocess
 import zipfile
 
+class tcol:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 VERBOSE = False # global variable holding whether do verbose prints or not
-verb_print = lambda message: print(message) if VERBOSE else None
+verb_print = lambda message, col=tcol.ENDC: print(col+message+tcol.ENDC) if VERBOSE else None
+cprint = lambda message, col=tcol.ENDC: print(col+message+tcol.ENDC)
 
 
 #============================================================
@@ -52,7 +64,7 @@ def fix_encoding_dir(path, recursive=False):
 
 
 def fix_encoding(args :argparse.Namespace):
-    verb_print(f"TASK: fix encoding of {args.path}")
+    verb_print(f"TASK: fix encoding of {args.path}", tcol.HEADER)
 
     
     if os.path.isdir(args.path):
@@ -64,11 +76,11 @@ def fix_encoding(args :argparse.Namespace):
         fix_encoding_file(args.path)
 
     else:
-        print(f"Error: {args.path} is not a valid file or directory!")
+        cprint(f"Error: {args.path} is not a valid file or directory!", tcol.FAIL)
         return 1
 
 
-    verb_print("TASK DONE")
+    verb_print("TASK DONE", tcol.HEADER)
 
 
 
@@ -80,7 +92,7 @@ def gen_check_res(args :argparse.Namespace, gen=True):
     '''
     Run command on all in files, write output to ans or verify if ans is matching
     '''
-    verb_print(f"TASK: {(lambda: "generating" if gen else "verifying")()} results")
+    verb_print(f"TASK: {(lambda: "generating" if gen else "verifying")()} results", tcol.HEADER)
 
     test_i = 1
     for in_file in glob.glob(f"**/*in*", root_dir=args.path, recursive=args.recursive):
@@ -107,7 +119,7 @@ def gen_check_res(args :argparse.Namespace, gen=True):
             shell=True
         )
         if process.returncode != 0:
-            print(f"Error: '{cmd}' failed on '{in_file_path}' with exit code {process.returncode}")
+            cprint(f"Error: '{cmd}' failed on '{in_file_path}' with exit code {process.returncode}", tcol.FAIL)
 
 
         ans_txt = process.stdout
@@ -123,18 +135,20 @@ def gen_check_res(args :argparse.Namespace, gen=True):
             out_files = glob.glob(f"*ans*", root_dir=dir_path) + glob.glob(f"*out*", root_dir=dir_path)
 
             if len(out_files) != 1:
-                print(f"Error: missing .out/.ans file in {dir_path}")
+                cprint(f"Error: missing .out/.ans file in {dir_path}", tcol.FAIL)
                 continue
 
             with open(f"{dir_path}/{out_files[0]}", "r") as f:
                 orig_ans_txt = f.read()
             
             if ans_txt != orig_ans_txt:
-                print(f"Warning: answer in \"{dir_name}\" does NOT Match answer generated with \"{cmd}\"")
+                cprint(f"WARNING: answer in \"{dir_name}\" does NOT Match answer generated with \"{cmd}\"", tcol.WARNING)
             else:
                 verb_print(f"  answer in {dir_name} matching")
+        
+        test_i += 1
 
-    verb_print("TASK DONE")
+    verb_print("TASK DONE", tcol.HEADER)
 
 #============================================================
 # ZIP
@@ -143,7 +157,7 @@ def gen_check_res(args :argparse.Namespace, gen=True):
 
 
 def make_import_zip(args :argparse.Namespace):
-    verb_print(f"TASK: generate {args.name}.zip")
+    verb_print(f"TASK: generate {args.name}.zip", tcol.HEADER)
 
     zipf = zipfile.PyZipFile(f"{args.name}.zip", "w")
     zipf.mkdir("data")
@@ -171,15 +185,16 @@ def make_import_zip(args :argparse.Namespace):
         out_files = glob.glob(f"*ans*", root_dir=dir_path) + glob.glob(f"*out*", root_dir=dir_path)
 
         if len(out_files) != 1:
-            print(f"Error: missing .out/.ans file in {dir_path}")
+            cprint(f"Error: missing .out/.ans file in {dir_path}", tcol.FAIL)
 
         else:
             verb_print(f"  ans/out file found, writing to archive")
             zipf.write(f"{dir_path}/{out_files[0]}", f"data/secret/{test_i}.ans")
         
+        test_i += 1
 
     zipf.close()
-    verb_print("TASK DONE")
+    verb_print("TASK DONE", tcol.HEADER)
 
 
 
