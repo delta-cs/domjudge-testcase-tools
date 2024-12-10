@@ -6,7 +6,7 @@
 
 ## usage
 ```
-usage: testcase-tools.py [-h] [-V] [-r] [-f] [-g CMD] [-v CMD] [-z] [-n NAME] PATH
+usage: testcase-tools.py [-h] [-V] [-r] [-f] [-g CMD] [-v CMD] [-z] [-n NAME] [-tl TIMELIMIT] [-pdf PROBLEM_PDF] PATH
 
 positional arguments:
   PATH                  Path to a file or directory
@@ -21,5 +21,9 @@ options:
   -v CMD, --verify-answers CMD
                         run CMD for in.txt and verify correctness of out.txt
   -z, --make-zip        create mass upload zip from directory
-  -n NAME, --name NAME  specify name for zip
+  -n NAME, --name NAME  specify problem name
+  -tl TIMELIMIT, --timelimit TIMELIMIT
+                        specify problem timelimit
+  -pdf PROBLEM_PDF, --problem-pdf PROBLEM_PDF
+                        specify problem timelimit
 ```
