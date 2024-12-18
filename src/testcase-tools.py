@@ -57,7 +57,8 @@ def fix_encoding_file(file_path):
     
     # Normalize line endings to LF and prepare UTF-8 content
     normalized_content = content.replace("\r\n", "\n").replace("\r", "\n")
-    if normalized_content[-1] != '\n': normalized_content += '\n' # ensure the file always ends with \n
+
+    if len(normalized_content) > 0 and normalized_content[-1] != '\n': normalized_content += '\n' # ensure the file always ends with \n
     
     # Write the file back with UTF-8 encoding
     with open(file_path, "w", encoding="utf-8", newline="\n") as file:
