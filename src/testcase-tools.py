@@ -5,6 +5,7 @@ import glob
 import chardet
 import subprocess
 import zipfile
+import time
 
 class tcol:
     HEADER = '\033[95m'
@@ -125,6 +126,7 @@ def gen_check_res(args :argparse.Namespace, gen=True):
 
         verb_print(f"  running {cmd} on {dir_path}")
 
+        start_time = time.time()
         process = subprocess.run(
             cmd,
             input=in_txt,
@@ -132,6 +134,10 @@ def gen_check_res(args :argparse.Namespace, gen=True):
             capture_output=True, # Capture stdout and stderr
             shell=True
         )
+        delta_time = time.time() - start_time
+
+        verb_print(f"  finished in: {delta_time} s", tcol.OKBLUE)
+
         if process.returncode != 0:
             cprint(f"Error: '{cmd}' failed on '{in_file_path}' with exit code {process.returncode}", tcol.FAIL)
 
