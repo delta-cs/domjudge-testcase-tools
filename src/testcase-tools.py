@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+'''
+
+This is awful unreadable sphagetti but it gets the job done
+
+'''
+
 import argparse
 import os
 import glob
@@ -6,6 +13,7 @@ import chardet
 import subprocess
 import zipfile
 import time
+import platform
 
 class tcol:
     HEADER = '\033[95m'
@@ -31,6 +39,14 @@ def get_out_files(root_dir):
     out_files = glob.glob(f"*ans*", root_dir=root_dir) + glob.glob(f"*out*", root_dir=root_dir)
     return out_files
 
+
+def open_in_text_editor(path :str):
+    '''Tries to open <path> in a text editor'''
+    editor = os.environ.get("EDITOR")
+    if not editor:
+        editor = "notepad" if platform.system() == "Windows" else "nano"
+
+    subprocess.call([editor, path])
 
 
 
@@ -96,6 +112,30 @@ def fix_encoding(args :argparse.Namespace):
 
 
     verb_print("TASK DONE", tcol.HEADER)
+
+
+
+#============================================================
+# ADD TESTCASE
+#============================================================
+
+def add_testcase(args :argparse.Namespace):
+    '''
+    Generate a new testcase, open text editor for in/out
+    '''
+    testcase_path = os.path.join(args.path, args.add_testcase)
+
+    # make folder
+    os.mkdir(testcase_path)
+
+    in_path = os.path.join(testcase_path, "in.txt")
+    out_path = os.path.join(testcase_path, "out.txt")
+
+    open(in_path, "w").close() # create in case editor open fails
+    open_in_text_editor(in_path)
+    
+    open(out_path, "w").close()
+    open_in_text_editor(out_path)
 
 
 
@@ -244,6 +284,12 @@ def main():
         action="store_true",
         help="fix encoding of file(s) to UTF-8 LF"
     )
+    # Create testcases ====================
+    arg_parser.add_argument(
+        "-a", "--add-testcase",
+        metavar="TESTCASE_NAME",
+        help="generate folder named as <TESTCASE_NAME> with in.txt and out.txt ; runs dialogue for in / out content"
+    )
     # Answers =============================
     arg_parser.add_argument(
         "-g", "--generate-answers",
@@ -282,6 +328,8 @@ def main():
     if args.fix_encoding: # fix encodingss
         if fix_encoding(args) == 1: return 1
 
+    if args.add_testcase is not None:
+        add_testcase(args)
 
     if args.generate_answers is not None:
         gen_check_res(args)
