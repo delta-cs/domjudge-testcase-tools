@@ -313,11 +313,11 @@ def main():
         help="specify problem name"
     )
     arg_parser.add_argument(
-        "-tl", "--timelimit",
+        "-t", "--timelimit",
         help="specify problem timelimit (optional)"
     )
     arg_parser.add_argument(
-        "-pdf", "--problem-pdf",
+        "-p", "--problem-pdf",
         help="specify problem pdf (optional)"
     )
 
