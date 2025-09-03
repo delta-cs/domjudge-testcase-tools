@@ -3,27 +3,58 @@
 - enforcing correct file encodings (UTF-8 LF)
 - generation / verification of correctness of testcases
 - creating zip files for simple upload of problem to DOMjudge
+- ... and more
+
+## installation
+- *a)* to install without cloning, run:
+   ```bash
+   pip install git+https://github.com/delta-cs/domjudge-testcase-tools.git
+   ```
+
+- *b)* if you have cloned the repo, you can install by running:
+   ```bash
+   pip install -e . # replace '.' with root directory of the repo if needed
+   ```
+
 
 ## usage
+```bash
+$ testcase-tools [-h | --help] [-V | --verbose] [option]
 ```
-usage: testcase-tools.py [-h] [-V] [-r] [-f] [-g CMD] [-v CMD] [-z] [-n NAME] [-tl TIMELIMIT] [-pdf PROBLEM_PDF] PATH
+Options:
+*`[option]`*| *description*
+--|--
+`package` | package problem into zip archive for domjudge
+`add` | initialize new testcase
+`normalize` | normalize testcases text files to `UTF-8 LF`
+`run` | run solution on all testcases - useful for testing solutions or generating expected outputs
 
-positional arguments:
-  PATH                  Path to a file or directory
+Arguments for all options can be shown by runnnig:
+```bash
+$ testcase-tools [option] -h
+```
 
-options:
-  -h, --help            show this help message and exit
-  -V, --verbose         enable verbose output
-  -r, --recursive       process directories recursively
-  -f, --fix-encoding    fix encoding of file(s) to UTF-8 LF
-  -g CMD, --generate-answers CMD
-                        run CMD on every in.txt and generate out.txt
-  -v CMD, --verify-answers CMD
-                        run CMD for in.txt and verify correctness of out.txt
-  -z, --make-zip        create mass upload zip from directory
-  -n NAME, --name NAME  specify problem name
-  -tl TIMELIMIT, --timelimit TIMELIMIT
-                        specify problem timelimit
-  -pdf PROBLEM_PDF, --problem-pdf PROBLEM_PDF
-                        specify problem timelimit
+
+## tests directory format
+format of directory containing tests assumed by this toolkit
+```sh
+<tests directory>
+├─ <testcase name / description>
+│  ├─ in.txt
+│  ├─ out.txt
+│  └╶ .issample # OPTIONAL, presence of .issample marks sample testcase
+├─ ...
+```
+
+```sh
+# example
+tests/
+├─ 01-sample-test/
+│  ├─ in.txt
+│  ├─ out.txt
+│  └─ .issample
+│
+└─ 02-hidden-test/
+   ├─ in.txt
+   └─ out.txt
 ```

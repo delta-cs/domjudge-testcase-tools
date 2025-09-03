@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "testcase-tools"
+version = "0.1.0"
+description = "toolkit for managing domjudge problems and testcases"
+authors = [
+  { name = "x3nom", email = "jakub.p12345678910@gmail.com" }
+]
+dependencies = ["chardet"]
+requires-python = ">=3.8"
+
+[project.scripts]
+testcase-tools = "testcase_tools.main:main"
+
+[project.urls]
+Source = "https://github.com/delta-cs/domjudge-testcase-tools"
