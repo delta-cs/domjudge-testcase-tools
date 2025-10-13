@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "testcase-tools"
-version = "0.1.0"
+version = "0.1.1"
 description = "toolkit for managing domjudge problems and testcases"
 authors = [
   { name = "x3nom", email = "jakub.p12345678910@gmail.com" }
