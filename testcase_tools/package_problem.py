@@ -21,7 +21,7 @@ def make_import_zip(tests_path :str, output_path :str, problem_name :str, statem
     zipf.mkdir("data/sample")
 
     #================ config files setup =============================
-    problem_yaml_content = f"name: '{problem_name}\n"
+    problem_yaml_content = f"name: '{problem_name}'\n"
 
     problem_ini_content = f"timelimit='{timelimit}'\n" if timelimit is not None else ""
 

@@ -1,7 +1,7 @@
 from testcase_tools.misc import *
 
 import chardet
-import argparse
+import glob
 import os
 
 
