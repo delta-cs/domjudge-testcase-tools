@@ -13,7 +13,7 @@ def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False, 
     '''
     Run command on all in files, write output to ans or verify if ans is matching
     '''
-    cprint(f"TASK: {(lambda: "generating" if gen else "verifying")()} results", tcol.HEADER)
+    cprint(f"TASK: {(lambda: 'generating' if gen else 'verifying')()} results", tcol.HEADER)
 
     if timeout is not None: timeout = float(timeout)
 
