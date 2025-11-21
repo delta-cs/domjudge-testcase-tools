@@ -188,7 +188,7 @@ def main():
     command_run_parser.add_argument(
         '-E', '--exit-with-errors',
         action="store_true",
-        help="exits with code 4 if 1 or more tests are not matching, 8 on command exiting with non zero code or timeout"
+        help="exits with code 4 if 1 or more tests are not matching, 6 on timeout, 8 on command exiting with non zero code"
     )
     command_run_parser.set_defaults(func=command_run)
 

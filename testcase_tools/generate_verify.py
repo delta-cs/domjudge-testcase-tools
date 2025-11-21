@@ -19,6 +19,7 @@ def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False, 
 
     tests_failed = 0
     runs_failed = 0
+    timeouts = 0
     tests_total = 0
 
     test_i = 1
@@ -28,6 +29,10 @@ def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False, 
 
         dir_path = os.path.join(tests_path, os.path.dirname(in_file))
         dir_name = os.path.basename(dir_path)
+
+        if(os.path.isfile(os.path.join(dir_path, ".testignore"))):
+            cprint(f"ignoring test {dir_name}", tcol.WARNING)
+            continue
 
         with open(in_file_path, "r") as f:
             in_txt = f.read()
@@ -50,7 +55,7 @@ def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False, 
             cprint(f"  finished in: {delta_time} s", tcol.OKBLUE)
         except subprocess.TimeoutExpired:
             cprint(f"Error: timeout hit ({timeout}s)", tcol.FAIL)
-            runs_failed += 1
+            timeouts += 1
             continue
 
         if process.returncode != 0:
@@ -86,8 +91,9 @@ def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False, 
         
         test_i += 1
 
-    cprint(f"TASK DONE, {tests_failed + runs_failed}/{tests_total} tests failed ({runs_failed} run errors)", tcol.HEADER)
+    cprint(f"TASK DONE, {tests_failed + runs_failed + timeouts}/{tests_total} tests failed ({runs_failed} run errors, {timeouts} timeouts)", tcol.HEADER)
 
     if exit_with_errors:
         if runs_failed > 0: exit(8)
+        if timeouts > 0: exit(6)
         if tests_failed > 0: exit(4)
