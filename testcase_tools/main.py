@@ -50,7 +50,8 @@ def command_run(args):
     generate_verify.gen_check_res(
         tests_path = args.tests,
         cmd = args.cmd,
-        gen = args.generate
+        gen = args.generate,
+        exit_with_errors = args.exit_with_errors
     )
     '''
     Namespace(verbose=False, option='run', cmd='.', generate=False, func=<function command_run at 0x7998f52c14e0>)
@@ -178,6 +179,11 @@ def main():
         '-g', '--generate',
         action="store_true",
         help="generate ans files for all in files; othervise verification is done on in + out pairs"
+    )
+    command_run_parser.add_argument(
+        '-E', '--exit-with-errors',
+        action="store_true",
+        help="exits with code 4 if 1 or more tests are not matching, 8 on command exiting with non zero code"
     )
     command_run_parser.set_defaults(func=command_run)
 

@@ -9,11 +9,14 @@ from testcase_tools.misc import *
 #============================================================
 
 
-def gen_check_res(tests_path :str, cmd :str, gen=False):
+def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False):
     '''
     Run command on all in files, write output to ans or verify if ans is matching
     '''
     verb_print(f"TASK: {(lambda: "generating" if gen else "verifying")()} results", tcol.HEADER)
+
+    tests_failed = 0
+    runs_failed = 0
 
     test_i = 1
     for in_file in glob.glob(f"**/in.*", root_dir=tests_path, recursive=True):
@@ -43,7 +46,7 @@ def gen_check_res(tests_path :str, cmd :str, gen=False):
 
         if process.returncode != 0:
             cprint(f"Error: '{cmd}' failed on '{in_file_path}' with exit code {process.returncode}", tcol.FAIL)
-
+            runs_failed += 1
 
         out_txt = process.stdout
         
@@ -60,16 +63,22 @@ def gen_check_res(tests_path :str, cmd :str, gen=False):
 
             if len(out_files) != 1:
                 cprint(f"Error: missing out file in {dir_path}", tcol.FAIL)
+                tests_failed += 1
                 continue
 
             with open(f"{dir_path}/{out_files[0]}", "r") as f:
                 orig_out_txt = f.read()
             
             if out_txt != orig_out_txt:
-                cprint(f"VERIFICATION WARNING: answer in \"{dir_name}\" does NOT Match answer generated with \"{cmd}\"", tcol.WARNING + tcol.BOLD)
+                cprint(f"VERIFICATION ERROR: answer in \"{dir_name}\" does NOT Match answer generated with \"{cmd}\"", tcol.FAIL + tcol.BOLD)
+                tests_failed += 1
             else:
                 verb_print(f"  answer in {dir_name} matching", tcol.OKGREEN)
         
         test_i += 1
 
-    verb_print("TASK DONE", tcol.HEADER)
+    verb_print(f"TASK DONE, {tests_failed} tests failed, {runs_failed} run errors", tcol.HEADER)
+
+    if exit_with_errors:
+        if runs_failed > 0: exit(8)
+        if tests_failed > 0: exit(4)
