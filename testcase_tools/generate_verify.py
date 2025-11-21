@@ -9,18 +9,21 @@ from testcase_tools.misc import *
 #============================================================
 
 
-def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False):
+def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False, timeout=None):
     '''
     Run command on all in files, write output to ans or verify if ans is matching
     '''
-    verb_print(f"TASK: {(lambda: "generating" if gen else "verifying")()} results", tcol.HEADER)
+    cprint(f"TASK: {(lambda: "generating" if gen else "verifying")()} results", tcol.HEADER)
+
+    if timeout is not None: timeout = float(timeout)
 
     tests_failed = 0
     runs_failed = 0
+    tests_total = 0
 
     test_i = 1
     for in_file in glob.glob(f"**/in.*", root_dir=tests_path, recursive=True):
-
+        tests_total += 1
         in_file_path = os.path.join(tests_path, in_file)
 
         dir_path = os.path.join(tests_path, os.path.dirname(in_file))
@@ -30,19 +33,25 @@ def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False):
             in_txt = f.read()
 
 
-        verb_print(f"  running {cmd} on {dir_path}")
+        cprint(f"  running {cmd} on {dir_path}")
 
-        start_time = time.time()
-        process = subprocess.run(
-            cmd,
-            input=in_txt,
-            text=True, # Treat input and output as strings
-            capture_output=True, # Capture stdout and stderr
-            shell=True
-        )
-        delta_time = time.time() - start_time
+        try:
+            start_time = time.time()
+            process = subprocess.run(
+                cmd,
+                input=in_txt,
+                text=True, # Treat input and output as strings
+                capture_output=True, # Capture stdout and stderr
+                shell=True,
+                timeout=timeout
+            )
+            delta_time = time.time() - start_time
 
-        verb_print(f"  finished in: {delta_time} s", tcol.OKBLUE)
+            cprint(f"  finished in: {delta_time} s", tcol.OKBLUE)
+        except subprocess.TimeoutExpired:
+            cprint(f"Error: timeout hit ({timeout}s)", tcol.FAIL)
+            runs_failed += 1
+            continue
 
         if process.returncode != 0:
             cprint(f"Error: '{cmd}' failed on '{in_file_path}' with exit code {process.returncode}", tcol.FAIL)
@@ -73,11 +82,11 @@ def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False):
                 cprint(f"VERIFICATION ERROR: answer in \"{dir_name}\" does NOT Match answer generated with \"{cmd}\"", tcol.FAIL + tcol.BOLD)
                 tests_failed += 1
             else:
-                verb_print(f"  answer in {dir_name} matching", tcol.OKGREEN)
+                cprint(f"  answer in {dir_name} matching", tcol.OKGREEN)
         
         test_i += 1
 
-    verb_print(f"TASK DONE, {tests_failed} tests failed, {runs_failed} run errors", tcol.HEADER)
+    cprint(f"TASK DONE, {tests_failed + runs_failed}/{tests_total} tests failed ({runs_failed} run errors)", tcol.HEADER)
 
     if exit_with_errors:
         if runs_failed > 0: exit(8)

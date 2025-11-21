@@ -51,7 +51,8 @@ def command_run(args):
         tests_path = args.tests,
         cmd = args.cmd,
         gen = args.generate,
-        exit_with_errors = args.exit_with_errors
+        exit_with_errors = args.exit_with_errors,
+        timeout = args.timeout
     )
     '''
     Namespace(verbose=False, option='run', cmd='.', generate=False, func=<function command_run at 0x7998f52c14e0>)
@@ -176,6 +177,10 @@ def main():
         help="command to run (ex. \"python solution.py\")"
     )
     command_run_parser.add_argument(
+        '-t', '--timeout',
+        help="sets max run time"
+    )
+    command_run_parser.add_argument(
         '-g', '--generate',
         action="store_true",
         help="generate ans files for all in files; othervise verification is done on in + out pairs"
@@ -183,7 +188,7 @@ def main():
     command_run_parser.add_argument(
         '-E', '--exit-with-errors',
         action="store_true",
-        help="exits with code 4 if 1 or more tests are not matching, 8 on command exiting with non zero code"
+        help="exits with code 4 if 1 or more tests are not matching, 8 on command exiting with non zero code or timeout"
     )
     command_run_parser.set_defaults(func=command_run)
 
