@@ -74,9 +74,17 @@ def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False, 
             verb_print("  searching for out file to compare")
 
             out_files = glob.glob("out.*", root_dir=dir_path)
+            ans_files = glob.glob("ans.*", root_dir=dir_path)
 
-            if len(out_files) != 1:
+            if len(ans_files) >= 1: out_files.append(*ans_files)
+
+            if len(out_files) < 1:
                 cprint(f"Error: missing out file in {dir_path}", tcol.FAIL)
+                tests_failed += 1
+                continue
+            
+            elif len(out_files) > 1:
+                cprint(f"Error: multiple out files in {dir_path}", tcol.FAIL)
                 tests_failed += 1
                 continue
 
