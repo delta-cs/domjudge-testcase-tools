@@ -46,10 +46,17 @@ def make_import_zip(tests_path :str, output_path :str, problem_name :str, statem
 
         # try to find matching out file in the current directory
         out_files = glob.glob("out.*", root_dir=dir_path)
+        ans_files = glob.glob("ans.*", root_dir=dir_path)
 
-        if len(out_files) != 1:
+        if len(ans_files) >= 1: out_files.append(*ans_files)
+
+        if len(out_files) < 1:
             cprint(f"Error: missing out file in {dir_path}; skipping", tcol.FAIL)
             continue
+        elif len(out_files) > 1:
+            cprint(f"Error: multiple out files in {dir_path}", tcol.FAIL)
+            continue
+
         
 
         is_sample = os.path.exists(os.path.join(dir_path, SAMPLE_TEST_MARKER_FILE))
