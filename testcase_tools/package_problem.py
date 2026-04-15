@@ -39,14 +39,14 @@ def make_import_zip(tests_path :str, output_path :str, problem_name :str, statem
     sample_test_i = 1
     secret_test_i = 1
     # find all in files 
-    for in_file in glob.glob("**/in.*", root_dir=tests_path, recursive=True):
+    for in_file in glob.glob("**/*in*", root_dir=tests_path, recursive=True):
 
         dir_path = os.path.join(tests_path, os.path.dirname(in_file))
         dir_name = os.path.basename(dir_path)
 
         # try to find matching out file in the current directory
-        out_files = glob.glob("out.*", root_dir=dir_path)
-        ans_files = glob.glob("ans.*", root_dir=dir_path)
+        out_files = glob.glob("*out*", root_dir=dir_path)
+        ans_files = glob.glob("*ans*", root_dir=dir_path)
 
         if len(ans_files) >= 1: out_files.append(*ans_files)
 

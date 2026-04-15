@@ -29,7 +29,7 @@ def command_normalize(args):
     normalization.fix_encoding(
         path=args.path,
         recursive=args.recursive,
-        safe=args.safe_mode
+        safe=(not args.unsafe_mode)
     )
     
 
@@ -157,9 +157,9 @@ def main():
         help="descend trough folders recursively"
     )
     command_normalize_parser.add_argument(
-        '-s', '--safe-mode',
+        '-u', '--unsafe-mode',
         action="store_true",
-        help="will only attempt to convert files that contain 'in.*' or 'out.*' in their name"
+        help="without this flag, only files with 'in' or 'out' or 'ans' in their name will be processed"
     )
     command_normalize_parser.set_defaults(func=command_normalize)
 

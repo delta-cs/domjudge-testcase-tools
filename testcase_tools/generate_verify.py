@@ -23,7 +23,7 @@ def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False, 
     tests_total = 0
 
     test_i = 1
-    for in_file in glob.glob(f"**/in.*", root_dir=tests_path, recursive=True):
+    for in_file in glob.glob(f"**/*in*", root_dir=tests_path, recursive=True):
         tests_total += 1
         in_file_path = os.path.join(tests_path, in_file)
 
@@ -73,8 +73,8 @@ def gen_check_res(tests_path :str, cmd :str, gen=False, exit_with_errors=False, 
         else:
             verb_print("  searching for out file to compare")
 
-            out_files = glob.glob("out.*", root_dir=dir_path)
-            ans_files = glob.glob("ans.*", root_dir=dir_path)
+            out_files = glob.glob("*out*", root_dir=dir_path)
+            ans_files = glob.glob("*ans*", root_dir=dir_path)
 
             if len(ans_files) >= 1: out_files.append(*ans_files)
 

@@ -30,7 +30,8 @@ def fix_encoding_file(file_path):
     # Normalize line endings to LF and prepare UTF-8 content
     normalized_content = content.replace("\r\n", "\n").replace("\r", "\n")
 
-    if len(normalized_content) > 0 and normalized_content[-1] != '\n': normalized_content += '\n' # ensure the file always ends with \n
+    # ensure the file always ends with \n
+    if len(normalized_content) > 0 and normalized_content[-1] != '\n': normalized_content += '\n' 
     
     # Write the file back with UTF-8 encoding
     with open(file_path, "w", encoding="utf-8", newline="\n") as file:
@@ -44,7 +45,7 @@ def fix_encoding_dir(path, recursive=False, safe=True):
     '''
 
     for f in glob.glob(f"{path}/**", recursive=recursive):
-        if(os.path.isfile(f) and ((not safe) or any(x not in f for x in ('in.', 'out.')))): # if is file and has in/out in name
+        if(os.path.isfile(f) and ((not safe) or any(x not in f for x in ('in', 'out', 'ans')))): # if is file and has in/out in name
             fix_encoding_file(f)
 
 
@@ -55,7 +56,7 @@ def fix_encoding(path :str, recursive=False, safe=True):
     
     if os.path.isdir(path):
         verb_print(f"  directory detected, processing")
-        fix_encoding_dir(path, recursive, safe=True)
+        fix_encoding_dir(path, recursive, safe=safe)
 
 
     elif os.path.isfile(path):
